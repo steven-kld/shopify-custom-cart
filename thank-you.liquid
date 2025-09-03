@@ -50,7 +50,7 @@
       if (cartData && cartData.items && cartData.items.length > 0) {
         let htmlContent = '<h2>Your Order Details</h2><ul>';
         cartData.items.forEach(item => {
-          htmlContent += `<li>${item.quantity} x ${item.title}</li>`;
+          htmlContent += `<li>${item.title} (${item.quantity})</li>`;
         });
         htmlContent += '</ul>';
         cartDetailsDiv.innerHTML = htmlContent;
@@ -58,7 +58,23 @@
         cartDetailsDiv.innerHTML = '<p>No cart details available.</p>';
       }
 
-      // 4. Clear localStorage data
+      // 4. Clear the cart
+      fetch('/cart/clear.js', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+      }).then(response => {
+        if (response.ok) {
+          console.log('Cart has been cleared successfully.');
+        } else {
+          console.error('Failed to clear the cart.');
+        }
+      }).catch(error => {
+          console.error('Network error while trying to clear cart:', error);
+      });
+      
+      // 5. Clear localStorage data
       localStorage.removeItem('cartDataForThankYouPage');
       localStorage.removeItem('customerDataForThankYouPage');
     }
