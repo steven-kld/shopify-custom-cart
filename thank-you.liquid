@@ -1,0 +1,89 @@
+<div class="container{% unless section.settings.full_width %} container--reading-width{% endunless %}" {%- render 'animation-attrs', attrs: 'data-cc-animate' -%}>
+  {%- if section.settings.show_page_title -%}
+    <div class="page-header">
+      <h1 class="majortitle">{{ page.title }}</h1>
+      <p id="personal-message"></p>
+    </div>
+  {%- endif -%}
+
+  <div id="cart-details"></div>
+
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // 1. Retrieve data from localStorage
+    const storedCartData = localStorage.getItem('cartDataForThankYouPage');
+    const storedCustomerData = localStorage.getItem('customerDataForThankYouPage');
+
+    // 2. Display personalized message
+    if (storedCustomerData) {
+      const customerData = JSON.parse(storedCustomerData);
+      
+      const messageDiv = document.getElementById('personal-message');
+      
+      // WhatsApp and phone links
+      // const whatsappLink = 'https://wa.me/56961722802'; TODO define desc
+      const whatsappLink = 'https://api.whatsapp.com/send/?phone=56961722802';
+      const phoneLink = 'tel:+56961722802';
+      
+      const messageHTML = `
+        Dear ${customerData.full_name},
+        Your request has been processed. We will send a verification email to your address <i>${customerData.email}</i>, so don't forget to check your spam folder. We'll reach out to you soon!
+        <br><br>
+        If you have additional questions, you can <a href="${whatsappLink}">contact us via WhatsApp</a> or <a href="${phoneLink}">call us with +56961722802</a>.
+        <hr>
+      `;
+      
+      messageDiv.innerHTML = messageHTML;
+
+      console.log("-------------");
+      console.log(customerData);
+      console.log("-------------");
+    }
+
+    // 3. Display cart details (your existing logic)
+    if (storedCartData) {
+      const cartData = JSON.parse(storedCartData);
+      const cartDetailsDiv = document.getElementById('cart-details');
+      
+      if (cartData && cartData.items && cartData.items.length > 0) {
+        let htmlContent = '<h2>Your Order Details</h2><ul>';
+        cartData.items.forEach(item => {
+          htmlContent += `<li>${item.quantity} x ${item.title}</li>`;
+        });
+        htmlContent += '</ul>';
+        cartDetailsDiv.innerHTML = htmlContent;
+      } else {
+        cartDetailsDiv.innerHTML = '<p>No cart details available.</p>';
+      }
+
+      // 4. Clear localStorage data
+      localStorage.removeItem('cartDataForThankYouPage');
+      localStorage.removeItem('customerDataForThankYouPage');
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Page",
+  "class": "page-section-spacing",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_page_title",
+      "label": "Show the default page heading",
+      "info": "If hidden, you should provide a primary page heading (h1 tag) in another section with h1 capability (e.g. image with overlay text, or background video) for SEO purposes.",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width",
+      "default": false
+    }
+  ]
+}
+{% endschema %}
+
