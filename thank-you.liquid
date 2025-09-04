@@ -23,7 +23,11 @@
       const messageDiv = document.getElementById('personal-message');
       
       const phoneNumber = '56961722802';
+      const phoneLink = 'tel:+56961722802';
+
+      // Define the message variable here.
       const message = encodeURIComponent('Hola, me gustaría cotizar un evento. Mi nombre es ' + customerData.full_name);
+      
       let whatsappLink;
       if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
         // This is a mobile device, use the wa.me link to open the app
@@ -32,8 +36,6 @@
         // This is a desktop device, use the web.whatsapp link
         whatsappLink = `https://web.whatsapp.com/send/?phone=${phoneNumber}&text=${message}`;
       }
-      const whatsappLink = 'https://api.whatsapp.com/send/?phone=56961722802';
-      const phoneLink = 'tel:+56961722802';
       
       const messageHTML = `
         Querido ${customerData.full_name},
