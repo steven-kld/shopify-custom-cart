@@ -1,7 +1,7 @@
 <div class="container{% unless section.settings.full_width %} container--reading-width{% endunless %}" {%- render 'animation-attrs', attrs: 'data-cc-animate' -%}>
   {%- if section.settings.show_page_title -%}
     <div class="page-header">
-      <h1 class="majortitle">{{ page.title }}</h1>
+      <h1 class="majortitle">¡Te contactaremos pronto!</h1>
       <p id="personal-message"></p>
     </div>
   {%- endif -%}
@@ -22,16 +22,24 @@
       
       const messageDiv = document.getElementById('personal-message');
       
-      // WhatsApp and phone links
-      // const whatsappLink = 'https://wa.me/56961722802'; TODO define desc
+      const phoneNumber = '56961722802';
+      const message = encodeURIComponent('Hola, me gustaría cotizar un evento. Mi nombre es ' + customerData.full_name);
+      let whatsappLink;
+      if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        // This is a mobile device, use the wa.me link to open the app
+        whatsappLink = `https://wa.me/${phoneNumber}?text=${message}`;
+      } else {
+        // This is a desktop device, use the web.whatsapp link
+        whatsappLink = `https://web.whatsapp.com/send/?phone=${phoneNumber}&text=${message}`;
+      }
       const whatsappLink = 'https://api.whatsapp.com/send/?phone=56961722802';
       const phoneLink = 'tel:+56961722802';
       
       const messageHTML = `
-        Dear ${customerData.full_name},
-        Your request has been processed. We will send a verification email to your address <i>${customerData.email}</i>, so don't forget to check your spam folder. We'll reach out to you soon!
+        Querido ${customerData.full_name},
+        te enviaremos un correo electrónico de confirmación a <i>${customerData.email}</i>, no olvides revisar tu carpeta de correo no deseado.
         <br><br>
-        If you have additional questions, you can <a href="${whatsappLink}">contact us via WhatsApp</a> or <a href="${phoneLink}">call us with +56961722802</a>.
+        si necesitas una cotización urgente puedes escribirnos al <a href="${whatsappLink}">WhatsApp</a> o hacer una <a href="${phoneLink}">llamar al +56961722802</a>.
         <hr>
       `;
       

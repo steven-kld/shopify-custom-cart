@@ -132,47 +132,50 @@
               Add the custom field "Full Name" ONLY when the custom event service is active.
               The input name "attributes[Full Name]" will save the value as a cart attribute.
               {% endcomment %}
+              
               {% if has_event_service %}
+                <h6 style="font-size: 16px;">Dejanos información sobre tu evento y te vamos a contactar</h6>
+                <hr>
                 <div class="cart-note block lightly-spaced-row">
-                  <label class="block" for="custom-full-name">Full Name</label>
+                  <label class="block" for="custom-full-name">Tu nombre y apellido</label>
                   <input 
                     style="width: 100% !important;"  
                     type="text" 
                     id="custom-full-name" 
                     name="attributes[Full Name]" 
                     value="" 
-                    placeholder="Enter full name" 
+                    placeholder="Tu nombre y apellido" 
                     required>
                 </div>
                 
                 <div class="cart-note block lightly-spaced-row">
-                  <label class="block" for="custom-phone">Phone Number</label>
+                  <label class="block" for="custom-phone">Tu número de teléfono</label>
                   <input 
                     style="width: 100% !important;"  
                     type="tel" 
                     id="custom-phone" 
                     name="attributes[Phone Number]" 
                     value="" 
-                    placeholder="e.g., +1234567890" 
-                    pattern="^\+?[0-9\s\-\(\)]{7,20}$" 
-                    title="Please enter a valid phone number, e.g., +1234567890." 
+                    placeholder="e.g., 1234567890" 
+                    pattern="^[0-9\s\-\(\)]{7,20}$" 
+                    title="Tu número de teléfono" 
                     required>
                 </div>
 
                 <div class="cart-note block lightly-spaced-row">
-                  <label class="block" for="custom-email">Email Address</label>
+                  <label class="block" for="custom-email">Tu correo electrónico</label>
                   <input 
                     style="width: 100% !important;"  
                     type="email" 
                     id="custom-email" 
                     name="attributes[Email Address]" 
                     value="" 
-                    placeholder="Enter email address" 
+                    placeholder="Tu correo electrónico" 
                     required>
                 </div>
 
                 <div class="cart-note block lightly-spaced-row">
-                  <label class="block" for="custom-date">Preferred Date</label>
+                  <label class="block" for="custom-date">Fecha del evento</label>
                   <input 
                     style="width: 100% !important;"  
                     type="date" 
@@ -183,16 +186,22 @@
                 </div>
 
                 <div class="cart-note block lightly-spaced-row">
-                  <label class="block" for="custom-address">Address</label>
+                  <label class="block" for="custom-address">Dirección completa del evento</label>
                   <input 
                     style="width: 100% !important;"  
                     type="text" 
                     id="custom-address" 
                     name="attributes[Address]" 
                     value="" 
-                    placeholder="Enter address" 
+                    placeholder="Dirección completa del evento" 
                     required>
                 </div>
+                
+                <cart-note class="cart-note block lightly-spaced-row">
+                  <label class="block" for="note">Comentar la aplicación</label>
+                  <textarea id="note" name="note" style="width: 100% !important;"></textarea>
+                </cart-note>
+                
               {% endif %}
 
               {% if section.settings.show_shipping_calculator %}
@@ -270,7 +279,7 @@
                     {%- comment -%}
                       NOTE: Change 'thank-you-page' to the handle of your custom Shopify page.
                     {%- endcomment -%}
-                    <button type="submit" class="identixweb_checkout btn btn--large" id="custom-request" name="custom-request" disabled>Request party decoration</button>
+                    <button type="submit" class="identixweb_checkout btn btn--large" id="custom-request" name="custom-request" disabled>Cotizar</button>
                   {% else %}
                     <button type="submit" class="identixweb_checkout btn btn--large" id="update-cart" name="checkout" disabled>{{ 'cart.summary.checkout' | t }}</button>
                   {% endif %}
@@ -297,8 +306,14 @@
 <script> 
   document.addEventListener('DOMContentLoaded', function() { 
     const customRequestButton = document.getElementById('custom-request');
+    const form = document.getElementById('cartform');
     if (customRequestButton) {
       customRequestButton.addEventListener('click', async function(event) { 
+        if (!form.checkValidity()) {
+          // If the form is NOT valid, do nothing and let the browser's native UI handle it.
+          console.log('invalid'); 
+          return;
+        }
         event.preventDefault();
 
         // Show loading feedback
@@ -313,10 +328,11 @@
           const phoneField = document.getElementById('custom-phone'); 
           const emailField = document.getElementById('custom-email'); 
           const dateField = document.getElementById('custom-date'); 
-          
+          const noteField = document.getElementById('note');
+
           // Basic validation to prevent empty fields
           if (!fullNameField.value || !addressField.value || !phoneField.value || !emailField.value || !dateField.value) {
-            alert('Please fill out all required fields.');
+            {% comment %} alert('Please fill out all required fields.'); {% endcomment %}
             customRequestButton.disabled = false;
             customRequestButton.textContent = originalButtonText;
             return;
@@ -327,7 +343,8 @@
             'address': addressField.value.trim(), 
             'phone': phoneField.value.trim(), 
             'email': emailField.value.trim(), 
-            'date': dateField.value.trim() 
+            'date': dateField.value.trim(),
+            'note': noteField.value.trim()
           };
 
           // Fetch cart data from Shopify API
